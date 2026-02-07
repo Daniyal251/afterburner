@@ -1,1 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ФОРСАЖ — Автосервис в Набережных Челнах</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+:root {
+  --black: #0a0a0a;
+  --dark: #111111;
+  --darker: #1a1a1a;
+  --card: #161616;
+  --orange: #ff4d00;
+  --orange-glow: #ff6a00;
+  --yellow: #ffae00;
+  --white: #f0f0f0;
+  --gray: #888;
+  --light-gray: #ccc;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ===== PRELOADER ===== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--black);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+.preloader.hidden { opacity: 0; visibility: hidden; }
+.preloader-text {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  animation: preloaderPulse 0.8s ease-in-out infinite alternate;
+}
+@keyframes preloaderPulse {
+  from { opacity: 0.3; text-shadow: 0 0 20px transparent; }
+  to { opacity: 1; text-shadow: 0 0 40px var(--orange), 0 0 80px rgba(255,77,0,0.3); }
+}
+
+/* ===== NOISE OVERLAY ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, transparent 100%);
+  transition: background 0.3s;
+}
+nav.scrolled { background: rgba(10,10,10,0.97); backdrop-filter: blur(10px); }
+
+.nav-logo {
+  font-family: 'Russo One', sans-serif;
+  font-size: 1.6rem;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  position: relative;
+}
+.nav-logo::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--yellow));
+}
+
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: var(--light-gray);
+  text-decoration: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--orange); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-phone {
+  font-family: 'Oswald', sans-serif;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+}
+.nav-phone:hover { color: var(--orange); }
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 5px;
+}
+.burger span {
+  width: 28px;
+  height: 2px;
+  background: var(--white);
+  transition: 0.3s;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 4rem;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 50%, rgba(255,77,0,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(255,174,0,0.05) 0%, transparent 50%);
+}
+
+/* Speed lines */
+.speed-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.speed-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,77,0,0.3), transparent);
+  animation: speedLine 3s linear infinite;
+}
+@keyframes speedLine {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(200vw); opacity: 0; }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--orange);
+  border: 1px solid rgba(255,77,0,0.3);
+  padding: 0.4rem 1.2rem;
+  margin-bottom: 1.5rem;
+  animation: fadeSlideUp 0.8s ease-out 0.5s both;
+}
+
+.hero-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin-bottom: 1rem;
+  animation: fadeSlideUp 0.8s ease-out 0.7s both;
+}
+.hero-title .accent {
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 1.3rem;
+  color: var(--gray);
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  line-height: 1.5;
+  animation: fadeSlideUp 0.8s ease-out 0.9s both;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeSlideUp 0.8s ease-out 1.1s both;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--orange), var(--orange-glow));
+  color: var(--white);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,77,0,0.4);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.btn-secondary:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  background: var(--dark);
+  border-top: 1px solid rgba(255,77,0,0.15);
+  border-bottom: 1px solid rgba(255,77,0,0.15);
+  padding: 3rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+.stat-item { text-align: center; }
+.stat-number {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gray);
+  margin-top: 0.5rem;
+}
+
+/* ===== SECTIONS ===== */
+section { padding: 5rem 4rem; }
+.section-header { margin-bottom: 3rem; }
+.section-tag {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: var(--orange);
+  margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  text-transform: uppercase;
+}
+.section-title .accent {
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== SERVICES ===== */
+#services { background: var(--black); }
+
+.services-filter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.filter-btn {
+  background: var(--darker);
+  color: var(--gray);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 0.5rem 1.2rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1px;
+  background: rgba(255,77,0,0.1);
+  border: 1px solid rgba(255,77,0,0.1);
+}
+
+.service-card {
+  background: var(--card);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+.service-card:hover {
+  background: var(--darker);
+  transform: scale(1.01);
+  z-index: 2;
+  box-shadow: 0 0 30px rgba(255,77,0,0.1);
+}
+.service-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--light-gray);
+  transition: color 0.3s;
+}
+.service-card:hover .service-name { color: var(--white); }
+.service-price {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--orange);
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+.service-price .from {
+  font-size: 0.7rem;
+  color: var(--gray);
+  font-weight: 400;
+}
+
+/* ===== ADVANTAGES ===== */
+#advantages { background: var(--dark); }
+.advantages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.adv-card {
+  background: var(--card);
+  padding: 2rem;
+  border-left: 3px solid var(--orange);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.adv-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, transparent 50%, rgba(255,77,0,0.05) 50%);
+}
+.adv-card:hover {
+  border-left-color: var(--yellow);
+  transform: translateX(5px);
+}
+.adv-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.adv-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.adv-text {
+  color: var(--gray);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ===== BRANDS ===== */
+#brands { background: var(--black); }
+.brands-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+.brand-tag {
+  background: var(--darker);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 0.6rem 1.5rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray);
+  transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+}
+.brand-tag:hover {
+  color: var(--orange);
+  border-color: var(--orange);
+}
+
+/* ===== CONTACT ===== */
+#contact { background: var(--dark); }
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.contact-info { display: flex; flex-direction: column; gap: 2rem; }
+.contact-block {}
+.contact-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--orange);
+  margin-bottom: 0.5rem;
+}
+.contact-value {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.contact-value a {
+  color: var(--white);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.contact-value a:hover { color: var(--orange); }
+.contact-sub { color: var(--gray); font-size: 0.9rem; margin-top: 0.3rem; }
+
+.contact-map {
+  background: var(--card);
+  border: 1px solid rgba(255,77,0,0.1);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
+  border: none;
+  filter: grayscale(0.8) contrast(1.1);
+  transition: filter 0.5s;
+}
+.contact-map:hover iframe { filter: grayscale(0.3) contrast(1); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  padding: 1rem;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+.modal {
+  background: var(--dark);
+  border: 1px solid rgba(255,77,0,0.2);
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: var(--gray);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.modal-close:hover { color: var(--orange); }
+.modal-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.form-group { margin-bottom: 1rem; }
+.form-group label {
+  display: block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gray);
+  margin-bottom: 0.3rem;
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--white);
+  padding: 0.8rem 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  border-color: var(--orange);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,77,0,0.15);
+  padding: 2rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo {
+  font-family: 'Russo One', sans-serif;
+  font-size: 1.2rem;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+.footer-copy {
+  color: var(--gray);
+  font-size: 0.85rem;
+}
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+}
+.footer-socials a {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+}
+.footer-socials a:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ===== SCROLL ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  section, .stats-bar, footer, nav { padding-left: 2rem; padding-right: 2rem; }
+  .hero { padding: 0 2rem; }
+  .contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-phone { display: none; }
+  .burger { display: flex; }
+
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--dark);
+    padding: 2rem;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255,77,0,0.2);
+  }
+
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title { font-size: clamp(2.5rem, 10vw, 4rem); }
+
+  section { padding: 3rem 1.5rem; }
+  .stats-bar { padding: 2rem 1.5rem; }
+  footer { padding: 2rem 1.5rem; }
+  nav { padding: 1rem 1.5rem; }
+  .hero { padding: 0 1.5rem; }
+
+  .modal { padding: 2rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader">
+  <div class="preloader-text">Форсаж</div>
+</div>
+
+<!-- Navigation -->
+<nav>
+  <a href="#" class="nav-logo">Форсаж</a>
+  <ul class="nav-links">
+    <li><a href="#services">Услуги</a></li>
+    <li><a href="#advantages">Преимущества</a></li>
+    <li><a href="#brands">Марки авто</a></li>
+    <li><a href="#contact">Контакты</a></li>
+  </ul>
+  <a href="tel:+79046650039" class="nav-phone">+7 (904) 665-00-39</a>
+  <button class="burger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="speed-lines" id="speedLines"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Автосервис для иномарок</div>
+    <h1 class="hero-title">
+      <span class="accent">Форсаж</span><br>
+      Автосервис
+    </h1>
+    <p class="hero-sub">Профессиональный ремонт и обслуживание автомобилей в Набережных Челнах. Все марки. Гарантия на работы.</p>
+    <div class="hero-buttons">
+      <a href="#services" class="btn btn-primary">Наши услуги</a>
+      <a href="#" class="btn btn-secondary" onclick="openModal(event)">Записаться</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-number">365</div>
+    <div class="stat-label">Оценок — рейтинг 5.0</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-number">80+</div>
+    <div class="stat-label">Видов услуг</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-number">24/7</div>
+    <div class="stat-label">Онлайн-запись</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-number">∞</div>
+    <div class="stat-label">Гарантия качества</div>
+  </div>
+</div>
+
+<!-- Services -->
+<section id="services">
+  <div class="section-header reveal">
+    <div class="section-tag">// Прайс-лист</div>
+    <h2 class="section-title">Наши <span class="accent">услуги</span></h2>
+  </div>
+
+  <div class="services-filter reveal">
+    <button class="filter-btn active" data-filter="all">Все</button>
+    <button class="filter-btn" data-filter="engine">Двигатель</button>
+    <button class="filter-btn" data-filter="brakes">Тормоза</button>
+    <button class="filter-btn" data-filter="suspension">Подвеска</button>
+    <button class="filter-btn" data-filter="transmission">КПП / Сцепление</button>
+    <button class="filter-btn" data-filter="steering">Рулевое</button>
+    <button class="filter-btn" data-filter="exhaust">Выхлоп</button>
+    <button class="filter-btn" data-filter="tires">Шиномонтаж</button>
+    <button class="filter-btn" data-filter="other">Прочее</button>
+  </div>
+
+  <div class="services-grid reveal" id="servicesGrid"></div>
+</section>
+
+<!-- Advantages -->
+<section id="advantages">
+  <div class="section-header reveal">
+    <div class="section-tag">// Почему мы</div>
+    <h2 class="section-title">Наши <span class="accent">преимущества</span></h2>
+  </div>
+  <div class="advantages-grid">
+    <div class="adv-card reveal">
+      <div class="adv-icon">⚡</div>
+      <div class="adv-title">Все марки авто</div>
+      <div class="adv-text">Работаем с китайскими, корейскими, японскими, европейскими и отечественными автомобилями.</div>
+    </div>
+    <div class="adv-card reveal">
+      <div class="adv-icon">🔧</div>
+      <div class="adv-title">Полный спектр работ</div>
+      <div class="adv-text">От замены масла до капитального ремонта двигателя — все работы в одном месте.</div>
+    </div>
+    <div class="adv-card reveal">
+      <div class="adv-icon">🏆</div>
+      <div class="adv-title">Рейтинг 5.0</div>
+      <div class="adv-text">365 отзывов и максимальный рейтинг — лучшая гарантия качества нашей работы.</div>
+    </div>
+    <div class="adv-card reveal">
+      <div class="adv-icon">💰</div>
+      <div class="adv-title">Честные цены</div>
+      <div class="adv-text">Лучшие цены в Набережных Челнах. Прозрачная смета без скрытых наценок.</div>
+    </div>
+    <div class="adv-card reveal">
+      <div class="adv-icon">🛡️</div>
+      <div class="adv-title">Гарантия</div>
+      <div class="adv-text">Гарантия на все выполненные работы. Несём ответственность за результат.</div>
+    </div>
+    <div class="adv-card reveal">
+      <div class="adv-icon">🐾</div>
+      <div class="adv-title">Можно с питомцем</div>
+      <div class="adv-text">Дружественная атмосфера — приезжайте с домашними животными, мы рады всем.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Brands -->
+<section id="brands">
+  <div class="section-header reveal">
+    <div class="section-tag">// Марки автомобилей</div>
+    <h2 class="section-title">Работаем <span class="accent">со всеми</span></h2>
+  </div>
+  <div class="brands-list reveal">
+    <span class="brand-tag">Китайские</span>
+    <span class="brand-tag">Корейские</span>
+    <span class="brand-tag">Японские</span>
+    <span class="brand-tag">Отечественные</span>
+    <span class="brand-tag">Европейские</span>
+    <span class="brand-tag">Легковые</span>
+    <span class="brand-tag">Импортные</span>
+    <span class="brand-tag">Коммерческие</span>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="section-header reveal">
+    <div class="section-tag">// Связаться с нами</div>
+    <h2 class="section-title">Контакты и <span class="accent">адрес</span></h2>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info reveal">
+      <div class="contact-block">
+        <div class="contact-label">Адрес</div>
+        <div class="contact-value">ул. Академика Королёва, 9Б</div>
+        <div class="contact-sub">Набережные Челны, Республика Татарстан</div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Телефон</div>
+        <div class="contact-value">
+          <a href="tel:+79046650039">+7 (904) 665-00-39</a>
+        </div>
+        <div class="contact-value" style="margin-top:0.3rem">
+          <a href="tel:+79274875811">+7 (927) 487-58-11</a>
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Время работы</div>
+        <div class="contact-value">Открыто до 18:00</div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Мессенджеры</div>
+        <div style="display:flex;gap:0.8rem;margin-top:0.3rem;">
+          <a href="https://t.me/" class="btn btn-secondary" style="padding:0.6rem 1.2rem;font-size:0.85rem;">Telegram</a>
+          <a href="https://wa.me/79046650039" class="btn btn-secondary" style="padding:0.6rem 1.2rem;font-size:0.85rem;">WhatsApp</a>
+        </div>
+      </div>
+      <div class="contact-block">
+        <div class="contact-label">Оплата</div>
+        <div class="contact-sub" style="color:var(--light-gray)">Предоплата, наличные, оплата картой</div>
+      </div>
+      <div style="margin-top:0.5rem;">
+        <a href="#" class="btn btn-primary" onclick="openModal(event)">Записаться на сервис</a>
+      </div>
+    </div>
+    <div class="contact-map reveal">
+      <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A&source=constructor&ll=52.425278%2C55.741667&z=15&pt=52.425278%2C55.741667%2Cpm2rdm&lang=ru_RU" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Форсаж</div>
+  <div class="footer-copy">© 2026 Автосервис «Форсаж». Все права защищены.</div>
+  <div class="footer-socials">
+    <a href="https://t.me/" title="Telegram">✈</a>
+    <a href="https://wa.me/79046650039" title="WhatsApp">💬</a>
+  </div>
+</footer>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 class="modal-title">Запись на <span style="color:var(--orange)">сервис</span></h3>
+    <form onsubmit="submitForm(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ваше имя</label>
+          <input type="text" placeholder="Иван" required>
+        </div>
+        <div class="form-group">
+          <label>Телефон</label>
+          <input type="tel" placeholder="+7 (___) ___-__-__" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Марка и модель авто</label>
+        <input type="text" placeholder="Например: Toyota Camry">
+      </div>
+      <div class="form-group">
+        <label>Какая услуга нужна?</label>
+        <textarea placeholder="Опишите проблему или выберите услугу из прайса"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">Отправить заявку</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// Services Data
+const services = [
+  { name: 'Балансировка колеса', price: 250, cat: 'tires' },
+  { name: 'Замена вентилятора печки', price: 3500, cat: 'other' },
+  { name: 'Замена выпускного коллектора', price: 2500, cat: 'exhaust' },
+  { name: 'Замена гофры приёмной трубы', price: 2500, cat: 'exhaust' },
+  { name: 'Замена задних тормозных колодок (барабан)', price: 2000, cat: 'brakes' },
+  { name: 'Замена задних тормозных колодок (диск)', price: 1300, cat: 'brakes' },
+  { name: 'Замена масла в АКПП', price: 3500, cat: 'transmission' },
+  { name: 'Замена масла в двигателе', price: 700, cat: 'engine' },
+  { name: 'Замена масла в МКПП', price: 900, cat: 'transmission' },
+  { name: 'Замена опоры двигателя', price: 800, cat: 'engine' },
+  { name: 'Замена передних тормозных колодок', price: 1000, cat: 'brakes' },
+  { name: 'Замена прокладки ГБЦ', price: 20000, cat: 'engine' },
+  { name: 'Замена пружины сзади', price: 800, cat: 'suspension' },
+  { name: 'Замена пружины спереди', price: 2000, cat: 'suspension' },
+  { name: 'Замена радиатора отопителя', price: 3500, cat: 'other' },
+  { name: 'Замена радиатора охлаждения', price: 3500, cat: 'engine' },
+  { name: 'Замена резонатора глушителя', price: 700, cat: 'exhaust' },
+  { name: 'Замена ремня генератора', price: 1500, cat: 'engine' },
+  { name: 'Замена ремня ГРМ', price: 5000, cat: 'engine' },
+  { name: 'Замена рулевой рейки', price: 4500, cat: 'steering' },
+  { name: 'Замена рычагов подвески', price: 1200, cat: 'suspension' },
+  { name: 'Замена сайлентблока задней балки', price: 1500, cat: 'suspension' },
+  { name: 'Замена сайлентблока подрамника', price: 5000, cat: 'suspension' },
+  { name: 'Замена сайлентблока рычага', price: 1500, cat: 'suspension' },
+  { name: 'Замена свечей зажигания', price: 1000, cat: 'engine' },
+  { name: 'Замена свечей накаливания (дизель)', price: 2500, cat: 'engine' },
+  { name: 'Замена сцепления', price: 8000, cat: 'transmission' },
+  { name: 'Замена сцепления на РКПП', price: 15000, cat: 'transmission' },
+  { name: 'Замена топливного насоса', price: 2500, cat: 'engine' },
+  { name: 'Замена тормозной жидкости', price: 700, cat: 'brakes' },
+  { name: 'Замена троса ручника', price: 1500, cat: 'brakes' },
+  { name: 'Замена турбины', price: 5500, cat: 'engine' },
+  { name: 'Замена воздушного фильтра', price: 100, cat: 'engine' },
+  { name: 'Замена салонного фильтра', price: 250, cat: 'other' },
+  { name: 'Замена форсунок', price: 2500, cat: 'engine' },
+  { name: 'Замена форсунок (демонтаж/монтаж)', price: 1500, cat: 'engine' },
+  { name: 'Замена цепи ГРМ', price: 15000, cat: 'engine' },
+  { name: 'Защита картера — снятие/установка', price: 300, cat: 'other' },
+  { name: 'Капитальный ремонт двигателя', price: 45000, cat: 'engine' },
+  { name: 'Компьютерная диагностика', price: 1000, cat: 'engine' },
+  { name: 'Замена рулевого наконечника', price: 750, cat: 'steering' },
+  { name: 'Прокачка тормозной системы', price: 900, cat: 'brakes' },
+  { name: 'Промывка форсунок на стенде', price: 3500, cat: 'engine' },
+  { name: 'Промывка форсунок ультразвуком', price: 2500, cat: 'engine' },
+  { name: 'Проточка тормозного диска', price: 2500, cat: 'brakes' },
+  { name: 'Протяжка ручника', price: 500, cat: 'brakes' },
+  { name: 'Регулировка клапанов', price: 1500, cat: 'engine' },
+  { name: 'Ремонт втулки заднего стабилизатора', price: 500, cat: 'suspension' },
+  { name: 'Ремонт втулки переднего стабилизатора', price: 500, cat: 'suspension' },
+  { name: 'Ремонт генератора', price: 2500, cat: 'engine' },
+  { name: 'Ремонт глушителя (иномарки)', price: 2500, cat: 'exhaust' },
+  { name: 'Ремонт ГБЦ', price: 35000, cat: 'engine' },
+  { name: 'Ремонт заднего амортизатора', price: 1, cat: 'suspension' },
+  { name: 'Ремонт колеса (прокол)', price: 250, cat: 'tires' },
+  { name: 'Замена шаровой опоры', price: 900, cat: 'suspension' },
+  { name: 'Ремонт переднего амортизатора', price: 1300, cat: 'suspension' },
+  { name: 'Замена подшипника задней ступицы', price: 2000, cat: 'suspension' },
+  { name: 'Замена подшипника передней ступицы', price: 2000, cat: 'suspension' },
+  { name: 'Ремонт рулевой рейки ГУР', price: 19000, cat: 'steering' },
+  { name: 'Ремонт рулевой рейки ЭУР', price: 15000, cat: 'steering' },
+  { name: 'Ремонт стартера', price: 2500, cat: 'engine' },
+  { name: 'Замена стоек стабилизатора', price: 500, cat: 'suspension' },
+  { name: 'Ремонт суппортов', price: 1500, cat: 'brakes' },
+  { name: 'Ремонт турбины', price: 29000, cat: 'engine' },
+  { name: 'Замена ШРУСа (гранаты)', price: 1800, cat: 'suspension' },
+  { name: 'Смазка суппортов (направляющих)', price: 350, cat: 'brakes' },
+  { name: 'Снятие/установка колеса', price: 100, cat: 'tires' },
+  { name: 'Замена рулевой тяги', price: 850, cat: 'steering' },
+  { name: 'Удаление катализатора', price: 3500, cat: 'exhaust' },
+  { name: 'Чистка дроссельного узла', price: 1500, cat: 'engine' },
+  { name: 'Чистка тормозной системы', price: 400, cat: 'brakes' },
+  { name: 'Шиномонтаж R13', price: 1800, cat: 'tires' },
+  { name: 'Шиномонтаж R14', price: 2000, cat: 'tires' },
+  { name: 'Шиномонтаж R15', price: 2200, cat: 'tires' },
+  { name: 'Шиномонтаж R16', price: 2400, cat: 'tires' },
+  { name: 'Шиномонтаж R17', price: 2600, cat: 'tires' },
+  { name: 'Шиномонтаж R18', price: 2800, cat: 'tires' },
+  { name: 'Шиномонтаж R19', price: 3000, cat: 'tires' },
+  { name: 'Шиномонтаж R20', price: 3300, cat: 'tires' },
+  { name: 'Шиномонтаж R21', price: 3500, cat: 'tires' },
+];
+
+// Render services
+const grid = document.getElementById('servicesGrid');
+let currentFilter = 'all';
+
+function renderServices(filter) {
+  const filtered = filter === 'all' ? services : services.filter(s => s.cat === filter);
+  grid.innerHTML = filtered.map(s => `
+    <div class="service-card">
+      <span class="service-name">${s.name}</span>
+      <span class="service-price"><span class="from">от </span>${s.price.toLocaleString('ru-RU')} ₽</span>
+    </div>
+  `).join('');
+}
+renderServices('all');
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderServices(currentFilter);
+  });
+});
+
+// Speed lines
+const speedContainer = document.getElementById('speedLines');
+for (let i = 0; i < 8; i++) {
+  const line = document.createElement('div');
+  line.className = 'speed-line';
+  line.style.top = (10 + Math.random() * 80) + '%';
+  line.style.width = (100 + Math.random() * 200) + 'px';
+  line.style.animationDelay = (Math.random() * 5) + 's';
+  line.style.animationDuration = (2 + Math.random() * 3) + 's';
+  speedContainer.appendChild(line);
+}
+
+// Preloader
+window.addEventListener('load', () => {
+  setTimeout(() => document.querySelector('.preloader').classList.add('hidden'), 800);
+});
+
+// Scroll nav
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Mobile menu
+function toggleMenu() {
+  document.querySelector('.nav-links').classList.toggle('open');
+}
+
+// Modal
+function openModal(e) {
+  e.preventDefault();
+  document.getElementById('bookingModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('bookingModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('bookingModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+function submitForm(e) {
+  e.preventDefault();
+  alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+  closeModal();
+}
+</script>
+
+</body>
+</html>
